@@ -4,6 +4,7 @@ from typing import List
 
 from fastapi import FastAPI, status, Request
 from fastapi.responses import JSONResponse
+from fastapi.exceptions import RequestValidationError
 import redis
 
 from api.scheme import LinkData
@@ -11,11 +12,17 @@ from api.helpers import clean_data, valid_params
 
 
 app = FastAPI()
-r = redis.Redis()
+r = redis.Redis('redis')
 
 
-@app.get('/visited_domains')
-def get_visited_domains(request: Request) -> JSONResponse:
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request, exc):
+    return JSONResponse(content={'status': str(exc)},
+                        status_code=status.HTTP_400_BAD_REQUEST)
+
+
+@app.get('/visited_domains', name='domains')
+async def get_visited_domains(request: Request) -> JSONResponse:
     _from = request.query_params.get('from')
     to = request.query_params.get('to')
     if not valid_params(_from, to):
@@ -24,12 +31,12 @@ def get_visited_domains(request: Request) -> JSONResponse:
 
     stored_data: List[bytes] = r.zrangebyscore('links', min=_from, max=to)
     cleaned_data: List[str] = clean_data(stored_data)
-    content = {'links': cleaned_data, 'status': 'ok'}
+    content = {'domains': cleaned_data, 'status': 'ok'}
     return JSONResponse(content=content, status_code=status.HTTP_200_OK)
 
 
-@app.post('/visited_links', status_code=201)
-def post_visited_links(links: LinkData) -> JSONResponse:
+@app.post('/visited_links', name='links')
+async def post_visited_links(links: LinkData) -> JSONResponse:
     timestamp = int(time())
     stored_data = json.dumps(links.links)
     r.zadd('links', {stored_data: timestamp})

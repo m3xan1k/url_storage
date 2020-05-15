@@ -16,9 +16,12 @@ def clean_data(stored_data: List[list]) -> List[str]:
 def valid_params(_from: str, to: str) -> bool:
     valid = True
     if _from is None or to is None:
+        print(1)
         valid = False
     elif _from > to:
+        print(2)
         valid = False
     elif not all((_from.isnumeric(), to.isnumeric())):
+        print(3)
         valid = False
     return valid
