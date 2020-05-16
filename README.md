@@ -12,7 +12,7 @@ cd url_storage
 docker-compose up --build -d
 ```
 
-Service will be running locally on port tcp/8000
+Service will be running locally on port **tcp/8000**
 
 Resources
 
