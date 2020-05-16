@@ -1,7 +1,7 @@
 # url_storage
 Small API based on fastAPI and redis
 
-
+## First of all
 To run project locally you need **docker** and **docker-compose** installed,
 
 then
@@ -14,12 +14,12 @@ docker-compose up --build -d
 
 Service will be running locally on port **tcp/8000**
 
-Resources
+## Resources
 
 ```
 POST /visited_links
 ```
-Takes json like this
+### Takes json like this
 
 ```
 {"links": ["https://ya.ru","https://ya.ru?q=123","funbox.ru","https://stackoverflow.com/questions/11828270/how-to-exit-the-vim-editor"]}
@@ -32,21 +32,21 @@ from(numeric) timestamp
 to(numeric) timestamp
 ```
 
-You may test it like this
+## You may test it like this
 
-check timestamp
+### check timestamp
 
 ```
 date '+%s'
 ```
 
-make POST request
+### make POST request
 
 ```
 curl http://localhost:8000/visited_links -X POST -H 'Content-Type: Aplication/json' -d '{"links": ["https://ya.ru","https://ya.ru?q=123","funbox.ru","https://stackoverflow.com/questions/11828270/how-to-exit-the-vim-editor"]}' -L
 ```
 
-check timestamp one more time and place this timestamps into GET request params
+### check timestamp one more time and place this timestamps into GET request params
 
 ```
 curl 'http://localhost:8000/visited_domains?from=1589571773&to=1589571873'
